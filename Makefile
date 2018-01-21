@@ -5,6 +5,10 @@ SHELL			:= /bin/bash
 .DELETE_ON_ERROR:
 .SUFFIXES:
 
+# Check if using Tensorflow
+USING_TENSORFLOW	?= false
+#
+
 ##################################################
 # Compiler settings
 ##################################################
@@ -41,10 +45,12 @@ OBJECTS			:= $(patsubst %,$(OBJDIR)/%,$(_OBJECTS))
 ##################################################
 
 LDFLAGS			:= -Wl,-rpath='$$ORIGIN/lib/' -Wl,-rpath='$$ORIGIN/../lib/' -Wl,-rpath='$(CURDIR)/lib/' -L$(CURDIR)/lib/ -Llib/ -L/usr/local/lib/
-LDLIBS			:= 
+LDLIBS			:=
 
 # Tensorflow
+ifeq ($(USING_TENSORFLOW),true)
 LDLIBS			+= -ltensorflow_cc -ltensorflow_framework
+endif
 # OpenCV
 LDLIBS			+= `pkg-config --libs opencv`
 
@@ -56,19 +62,28 @@ INCLUDE			:= $(patsubst %,-I%,$(INCDIR))
 
 # OpenCV
 INCLUDE			+= `pkg-config --cflags opencv`
-# Nsync
+# Nsync, for Tensorflow
+ifeq ($(USING_TENSORFLOW),true)
 INCLUDE			+=  -Iinclude/nsync/
+endif
 
 ##################################################
 # Make rules
 ##################################################
+
+ifeq ($(USING_TENSORFLOW),true)
+SRCFILE 		:= test-tensorflow.cpp
+else
+SRCFILE			:= test-opencv.cpp
+endif
+
 
 .PHONY: all
 all: $(OBJECTS)
 	@echo "----- Compiling main -----"
 	@mkdir -p $(OBJDIR)
 	@mkdir -p $(BINDIR)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(SRCDIR)test.cpp $(LDLIBS) -o $(BINDIR)main
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(SRCDIR)$(SRCFILE) $(LDLIBS) -o $(BINDIR)main
 
 $(OBJDIR)%.o: $(SRCDIR)%.cpp
 	@echo "----- Compiling object file:" $@ "from" $< "-----"
