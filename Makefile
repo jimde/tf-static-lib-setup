@@ -1,8 +1,7 @@
-#http://clarkgrubb.com/makefile-style-guide
-MAKEFLAGS 		+= --warn-undefined-variables
-SHELL 			:= /bin/bash
-.SHELLFLAGS 	:= -eu -o pipefail -c
-.DEFAULT_GOAL 	:= all
+MAKEFLAGS 				+= --warn-undefined-variables
+SHELL 						:= /bin/bash
+.SHELLFLAGS 			:= -eu -o pipefail -c
+.DEFAULT_GOAL			:= all
 .DELETE_ON_ERROR:
 .SUFFIXES:
 
@@ -11,54 +10,54 @@ SHELL 			:= /bin/bash
 ##################################################
 
 # Set compiler to g++
-CXX				:= g++
+CXX								:= g++
 
 # Compiler flags
-CXXFLAGS		:= -g -Wall -std=c++11
+CXXFLAGS					:= -g -Wall -std=c++11
 
 ##################################################
 # Directory macros
 ##################################################
 
-INCDIR		:= include/
-SRCDIR		:= src/
-TESTDIR		:= test/
+INCDIR						:= include/
+SRCDIR						:= src/
+TESTDIR						:= test/
 
 # Where compiled objects are stored
-BINDIR		:= bin/
-OBJDIR		:= build/
-GENDIR		:=
+BINDIR						:= bin/
+OBJDIR						:= build/
+GENDIR						:=
 
 ##################################################
 # Required object dependencies
 ##################################################
 
 # Update this line with list of objects to be compiled
-_OBJECTS	:=
-OBJECTS		:= $(patsubst %,$(OBJDIR)/%,$(_OBJECTS))
+_OBJECTS					:=
+OBJECTS						:= $(patsubst %,$(OBJDIR)/%,$(_OBJECTS))
 
 ##################################################
 # Linker
 ##################################################
 
-LDFLAGS		:= -Wl,-rpath='$$ORIGIN/lib/' -Wl,-rpath='$$ORIGIN/../lib/' -Wl,-rpath='$(CURDIR)/lib/' -L$(CURDIR)/lib/ -Llib/ -L/usr/local/lib/
-LDLIBS		:= 
+LDFLAGS						:= -Wl,-rpath='$$ORIGIN/lib/' -Wl,-rpath='$$ORIGIN/../lib/' -Wl,-rpath='$(CURDIR)/lib/' -L$(CURDIR)/lib/ -Llib/ -L/usr/local/lib/
+LDLIBS						:= 
 
 # Tensorflow
-LDLIBS 		+=	-ltensorflow_cc -ltensorflow_framework
+LDLIBS 						+=	-ltensorflow_cc -ltensorflow_framework
 # OpenCV
-LDLIBS 		+= `pkg-config --libs opencv`
+LDLIBS 						+= `pkg-config --libs opencv`
 
 ##################################################
 # Header files
 ##################################################
 
-INCLUDE		:= $(patsubst %,-I%,$(INCDIR))
+INCLUDE						:= $(patsubst %,-I%,$(INCDIR))
 
 # OpenCV
-INCLUDE		+= `pkg-config --cflags opencv`
+INCLUDE						+= `pkg-config --cflags opencv`
 # Nsync
-INCLUDE		+=  -Iinclude/nsync/
+INCLUDE						+=  -Iinclude/nsync/
 
 ##################################################
 # Make rules
